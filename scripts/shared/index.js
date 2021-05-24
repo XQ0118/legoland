@@ -3,6 +3,12 @@ const { resolve } = require('path')
 const srcPath = resolve(__dirname, '../../src')
 const libTypes = require('../../config').libs.map(lib => lib.name)
 
+/**
+ * @description: 替换模版文件中的变量
+ * @param {*} str: 文件内容
+ * @param {*} data: 变量对象
+ * @return {*}
+ */
 function transfTemplate(str = '', data = {}) {
   let resultStr = str
   for (const key in data) {
@@ -24,14 +30,26 @@ function toCamelCase(str = '') {
   return `${str.substr(0, 1).toUpperCase()}${rest}`
 }
 
+/**
+ * @description: 替换模版文件
+ * @param {*} filePaths: 替换的文件路径
+ * @param {*} data: 组件 name/type/group
+ * @param {*} callback
+ * @return {*}
+ */
 function replaceTemplateFiles(filePaths, data, callback) {
   if (typeof filePaths === 'string') {
     filePaths = [filePaths]
   }
   for (const filePath of filePaths) {
     let fileStr = fs.readFileSync(filePath, 'utf-8')
+    // 获取模版文件原始内容
+
     fileStr = transfTemplate(fileStr, data)
+    // 替换模版文件的中的变量
+
     callback && callback(filePath, fileStr)
+    // 将 文件路径/替换变量后的文件内容 抛出去
   }
 }
 
